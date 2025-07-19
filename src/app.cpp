@@ -4,7 +4,7 @@
 
 bool App::OnInit()
 {
-    MainFrame* mainframe = new MainFrame("My Funny Window");
+    MainFrame* mainframe = new MainFrame("Text Editor");
     mainframe->SetClientSize(800,600);
     mainframe->Center();
     mainframe->Show();
