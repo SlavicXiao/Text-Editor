@@ -4,7 +4,8 @@
 
 enum IDS
 {
-    ID_SAVE = 2
+    ID_SAVE = 1,
+    ID_SAVE_AS = 2
 };
 
 MainFrame::MainFrame(const wxString& title): wxFrame(nullptr, wxID_ANY, title)
@@ -25,7 +26,7 @@ MainFrame::MainFrame(const wxString& title): wxFrame(nullptr, wxID_ANY, title)
     MenuFile->Append(wxID_ANY, "&New File...\tCtrl+N");
     MenuFile->Append(wxID_ANY, "&Open...\tCtrl+O");
     MenuFile->Append(ID_SAVE, "&Save...\tCtrl+S");
-    MenuFile->Append(wxID_ANY, "&Save As...\tCtrl+Shift+S");
+    MenuFile->Append(ID_SAVE_AS, "&Save As...\tCtrl+Shift+S");
 
     wxMenu* MenuEdit = new wxMenu;
     MenuEdit->Append(wxID_ANY, "&Undo");
@@ -43,20 +44,51 @@ MainFrame::MainFrame(const wxString& title): wxFrame(nullptr, wxID_ANY, title)
     MenuBar->Append(MenuEdit, "&Edit");
     
     SetMenuBar(MenuBar);
-    
 
     Bind(wxEVT_MENU, [this, textCTRL](wxCommandEvent& event) 
     {
-        Save(textCTRL);
+        if(FilePath == "")
+        {
+            FilePath = SaveAs(textCTRL);
+        }
+
+        else
+        {
+            Save(textCTRL, FilePath);
+        }
+
     }, ID_SAVE);
+
+    Bind(wxEVT_MENU, [this, textCTRL](wxCommandEvent& event) 
+    {
+        FilePath = SaveAs(textCTRL);
+    },ID_SAVE_AS);
 
 };
 
-void MainFrame::Save(wxTextCtrl* TextBox)
+wxString MainFrame::SaveAs(wxTextCtrl* TextBox)
+{
+    wxFileDialog* SaveFileDialog = new wxFileDialog(this, _("Save File"), "", "", "Text Files: (*.txt)|*.txt|All files (*.*)|*.*", wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    wxString FilePath;
+    if(SaveFileDialog->ShowModal() != wxID_CANCEL)
+    {
+        FilePath = SaveFileDialog->GetPath();
+        MainFrame::Save(TextBox, FilePath);
+    }
+
+    else 
+    {
+        FilePath = "";
+    }
+
+    return FilePath;
+}
+
+void MainFrame::Save(wxTextCtrl* TextBox, wxString FilePath)
 {
     wxString text = TextBox->GetValue();
 
-    std::ofstream OutFile("SaveFile.txt");
+    std::ofstream OutFile(FilePath.ToStdString());
 
     if (OutFile.is_open()) 
     {

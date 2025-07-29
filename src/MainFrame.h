@@ -9,5 +9,8 @@ class MainFrame : public wxFrame
     public:
         MainFrame(const wxString& title);
     private:
-        void Save(wxTextCtrl* TextBox);
+        wxString FilePath;
+        
+        wxString SaveAs(wxTextCtrl* TextBox);
+        void Save(wxTextCtrl* TextBox, wxString FilePath);
 };
