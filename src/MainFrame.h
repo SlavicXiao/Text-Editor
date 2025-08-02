@@ -1,8 +1,7 @@
 #pragma once
 #include<wx/wx.h>
-#include<filesystem>
 #include<fstream>
-#include<algorithm>
+#include<iostream>
 
 class MainFrame : public wxFrame
 {
@@ -13,4 +12,5 @@ class MainFrame : public wxFrame
         
         wxString SaveAs(wxTextCtrl* TextBox);
         void Save(wxTextCtrl* TextBox, wxString FilePath);
+        wxString Open(wxTextCtrl* Textbox);
 };
